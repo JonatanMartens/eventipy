@@ -1,4 +1,4 @@
-name: Publish eventipy
+name: publish
 
 on:
   release:
