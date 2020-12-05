@@ -1,7 +1,7 @@
 Welcome to eventipy's documentation!
 ====================================
 
-Internal python event library.
+In-memory python event library.
 
 
 Current version is |version|.

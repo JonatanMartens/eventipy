@@ -12,7 +12,7 @@ setuptools.setup(
     version=version,
     author="Jonatan Martens",
     author_email="jonatanmartenstav@gmail.com",
-    description="Python event library",
+    description="In-memory python event library",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/JonatanMartens/eventipy",
