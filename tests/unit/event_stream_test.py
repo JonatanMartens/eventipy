@@ -1,4 +1,5 @@
 from random import randint
+from unittest.mock import MagicMock
 from uuid import uuid4
 
 import pytest
@@ -64,3 +65,31 @@ def test_get_five_events_by_topic():
 def test_get_by_id():
     events.write(event)
     assert events.get_by_id(event.id) == event
+
+
+def test_subscribe():
+    topic = str(uuid4())
+
+    @events.subscribe(topic)
+    def handler(event: Event):
+        return event.id
+
+    assert handler(event) == event.id
+    assert isinstance(events.subscribers[topic], list)
+
+
+def test_subscribe_event_published():
+    @events.subscribe(event.topic)
+    def handler(event: Event):
+        return event.id
+
+    events.subscribers[event.topic][0] = MagicMock()
+    events.write(event)
+    events.subscribers[event.topic][0].assert_called_with(event)
+
+
+def test_add_subscriber():
+    events._add_subscriber(event.topic, lambda x: x)
+    assert len(events.subscribers[event.topic]) == 1
+    events._add_subscriber(event.topic, lambda x: x)
+    assert len(events.subscribers[event.topic]) == 2
