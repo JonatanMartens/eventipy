@@ -19,12 +19,12 @@ def run_around_tests():
     yield
 
 
-def test_write():
+def test_publish():
     events.publish(event)
     assert events[0] == event
 
 
-def test_write_integer():
+def test_publish_integer():
     with pytest.raises(TypeError):
         events.publish(0)
 
