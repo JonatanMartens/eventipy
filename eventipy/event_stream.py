@@ -15,7 +15,12 @@ class EventStream(Sequence):
         self.__events: List[Event] = []
         self.subscribers: Dict[str, List[Callable]] = {}
 
-    def publish(self, event: Event):
+    def publish(self, event: Event) -> None:
+        """
+        Args:
+            event (Event): The event to publish
+        """
+
         if not isinstance(event, Event):
             raise TypeError("event must be of type Event")
 
@@ -25,7 +30,7 @@ class EventStream(Sequence):
         self.__events.append(event)
         self._publish_to_subscribers(event)
 
-    def _publish_to_subscribers(self, event: Event):
+    def _publish_to_subscribers(self, event: Event) -> None:
         try:
             for handler in self.subscribers[event.topic]:
                 # Ensure handler is called, but don't wait for result
@@ -34,7 +39,12 @@ class EventStream(Sequence):
             pass
 
     def subscribe(self, topic: str) -> Callable:
-        def wrapper(event_handler: Callable[..., None]):
+        """
+        Args:
+            topic (str): The topic to which this handler listens
+        """
+
+        def wrapper(event_handler: Callable[..., None]) -> Callable:
             @wraps(event_handler)
             async def handle_event(event: Event):
                 try:
@@ -49,18 +59,27 @@ class EventStream(Sequence):
 
         return wrapper
 
-    def _add_subscriber(self, topic: str, handler: Callable):
+    def _add_subscriber(self, topic: str, handler: Callable) -> None:
         try:
             self.subscribers[topic].append(handler)
         except KeyError:
             self.subscribers[topic] = [handler]
 
     def get_by_id(self, event_id: UUID) -> Event:
+        """
+        Args:
+            event_id (UUID): The id of the wanted event
+        """
         for event in self.__events:
             if event.id == event_id:
                 return event
 
     def get_by_topic(self, topic: str, max_events: int = None) -> List[Event]:
+        """
+        Args:
+            topic (str): The topic to which the event was published
+            max_events (int): The maximum number of events to retrieve
+        """
         matching_events = []
         for event in self.__events:
             if event.topic == topic:
@@ -75,13 +94,13 @@ class EventStream(Sequence):
     def __getitem__(self, i: int) -> Event:
         return self.__events[i]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value) -> None:
         raise TypeError("EventStream object does not support item assignment")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return repr(self.__events)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.__events)
 
 
