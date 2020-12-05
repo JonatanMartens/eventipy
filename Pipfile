@@ -4,7 +4,6 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-behave = "~=1.2.6"
 pytest = "~=6.1.2"
 
 [packages]
