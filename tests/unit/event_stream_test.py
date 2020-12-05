@@ -46,7 +46,11 @@ def test_get_all_events_by_topic():
     topic_events = events.get_by_topic(topic=topic)
 
     assert len(topic_events) == amount_of_events
-    assert len([topic_event for topic_event in topic_events if topic_event.topic == topic]) == len(topic_events)
+    matching_topic_events = [topic_event
+                             for topic_event in topic_events
+                             if topic_event.topic == topic]
+
+    assert len(matching_topic_events) == len(topic_events)
 
 
 def test_get_five_events_by_topic():
@@ -60,7 +64,11 @@ def test_get_five_events_by_topic():
     topic_events = events.get_by_topic(topic=topic, max_events=max_events)
 
     assert len(topic_events) == max_events
-    assert len([topic_event for topic_event in topic_events if topic_event.topic == topic]) == len(topic_events)
+    matching_topic_events = [topic_event
+                             for topic_event in topic_events
+                             if topic_event.topic == topic]
+
+    assert len(matching_topic_events) == len(topic_events)
 
 
 def test_get_by_id():
@@ -72,8 +80,8 @@ def test_subscribe():
     topic = str(uuid4())
 
     @events.subscribe(topic)
-    def handler(event: Event):
-        return event.id
+    def handler(received_event: Event):
+        return received_event.id
 
     assert handler(event) == event.id
     assert isinstance(events.subscribers[topic], list)
@@ -81,8 +89,8 @@ def test_subscribe():
 
 def test_subscribe_event_published():
     @events.subscribe(event.topic)
-    def handler(event: Event):
-        return event.id
+    def handler(received_event: Event):
+        return received_event.id
 
     events.subscribers[event.topic][0] = MagicMock()
     events.subscribers[event.topic][0].return_value = asyncio.Future()
