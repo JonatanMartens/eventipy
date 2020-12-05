@@ -37,7 +37,7 @@ def test_set_item():
 
 
 def test_get_all_events_by_topic():
-    amount_of_events = randint(0, 30)
+    amount_of_events = randint(1, 30)
     topic = str(uuid4())
 
     for _ in range(amount_of_events):
@@ -54,8 +54,8 @@ def test_get_all_events_by_topic():
 
 
 def test_get_five_events_by_topic():
-    amount_of_events = randint(0, 30)
-    max_events = randint(0, amount_of_events - 1)
+    amount_of_events = randint(1, 30)
+    max_events = randint(1, amount_of_events)
     topic = str(uuid4())
 
     for _ in range(amount_of_events):
