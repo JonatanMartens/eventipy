@@ -1,0 +1,53 @@
+Welcome to eventipy's documentation!
+====================================
+
+Internal python event library.
+
+
+Current version is |version|.
+
+
+Library installation
+====================
+
+.. code-block:: bash
+
+   $ pip install eventipy
+
+Getting Started
+===============
+
+Publishing an event:
+
+.. code-block:: python
+
+    from eventipy import events, Event
+
+    event = Event("my-topic")
+    events.publish(event)
+
+
+Subscribing to a topic:
+
+.. code-block:: python
+
+    from eventipy import events
+
+    @events.subscribe("my-topic")
+    def event_handler(event: Event):
+        print(event.id)
+        print(event.topic)
+
+Dependencies
+============
+
+``eventipy`` has no dependencies!
+
+Table Of Contents
+=================
+.. toctree::
+   :maxdepth: 2
+
+    Publishing events <publishing>
+    Subscribing to topics <subscribing>
+    Reference <reference>
