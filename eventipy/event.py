@@ -1,7 +1,8 @@
-from uuid import uuid4
+from dataclasses import dataclass, field
+from uuid import uuid4, UUID
 
 
+@dataclass
 class Event:
-    def __init__(self, topic: str):
-        self.id = uuid4()
-        self.topic = topic
+    topic: str
+    id: UUID = field(default_factory=uuid4)
