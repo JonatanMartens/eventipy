@@ -20,17 +20,17 @@ def run_around_tests():
 
 
 def test_write():
-    events.write(event)
+    events.publish(event)
     assert events[0] == event
 
 
 def test_write_integer():
     with pytest.raises(TypeError):
-        events.write(0)
+        events.publish(0)
 
 
 def test_set_item():
-    events.write(event)
+    events.publish(event)
     with pytest.raises(TypeError):
         events[0] = event
 
@@ -40,7 +40,7 @@ def test_get_all_events_by_topic():
     topic = str(uuid4())
 
     for _ in range(amount_of_events):
-        events.write(Event(topic))
+        events.publish(Event(topic))
 
     topic_events = events.get_by_topic(topic=topic)
 
@@ -54,7 +54,7 @@ def test_get_five_events_by_topic():
     topic = str(uuid4())
 
     for _ in range(amount_of_events):
-        events.write(Event(topic))
+        events.publish(Event(topic))
 
     topic_events = events.get_by_topic(topic=topic, max_events=max_events)
 
@@ -63,7 +63,7 @@ def test_get_five_events_by_topic():
 
 
 def test_get_by_id():
-    events.write(event)
+    events.publish(event)
     assert events.get_by_id(event.id) == event
 
 
@@ -84,7 +84,7 @@ def test_subscribe_event_published():
         return event.id
 
     events.subscribers[event.topic][0] = MagicMock()
-    events.write(event)
+    events.publish(event)
     events.subscribers[event.topic][0].assert_called_with(event)
 
 

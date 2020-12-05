@@ -14,7 +14,7 @@ class EventStream(Sequence):
         self.__events: List[Event] = []
         self.subscribers: Dict[str, List[Callable]] = {}
 
-    def write(self, event: Event):
+    def publish(self, event: Event):
         if not isinstance(event, Event):
             raise TypeError("event must be of type Event")
 
