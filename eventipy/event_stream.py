@@ -28,7 +28,7 @@ class EventStream(Sequence):
     def _publish_to_subscribers(self, event: Event):
         try:
             for handler in self.subscribers[event.topic]:
-                asyncio.ensure_future(handler(event))
+                asyncio.ensure_future(handler(event))  # Ensure handler is called, but don't wait for result
         except KeyError:
             pass
 
