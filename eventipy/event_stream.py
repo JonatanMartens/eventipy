@@ -28,21 +28,24 @@ class EventStream(Sequence):
     def _publish_to_subscribers(self, event: Event):
         try:
             for handler in self.subscribers[event.topic]:
-                asyncio.ensure_future(handler(event))  # Ensure handler is called, but don't wait for result
+                # Ensure handler is called, but don't wait for result
+                asyncio.ensure_future(handler(event))
         except KeyError:
             pass
 
     def subscribe(self, topic: str) -> Callable:
-        def wrapper(fn: Callable[..., None]):
-            @wraps(fn)
+        def wrapper(event_handler: Callable[..., None]):
+            @wraps(event_handler)
             async def handle_event(event: Event):
                 try:
-                    fn(event)
-                except Exception as e:
-                    logger.warning(f"{fn.__name__} failed to handle event of topic {topic}. Exception: {e}")
+                    event_handler(event)
+                except Exception as exception:
+                    logger.warning(f"{event_handler.__name__} failed to handle "
+                                   f"event of topic {topic}. "
+                                   f"Exception: {exception}")
 
             self._add_subscriber(topic, handler=handle_event)
-            return fn
+            return event_handler
 
         return wrapper
 
