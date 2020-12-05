@@ -1,0 +1,13 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pytest = "~=6.1.2"
+sphinx = "~=3.3.1"
+sphinx-rtd-theme = "*"
+coveralls = "~=2.2.0"
+pylint = "~=2.6.0"
+
+[packages]
