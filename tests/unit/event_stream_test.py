@@ -93,6 +93,10 @@ def test_subscribe_event_published():
         return received_event.id
 
     events.subscribers[event.topic][0] = MagicMock()
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
     events.subscribers[event.topic][0].return_value = asyncio.Future()
     events.publish(event)
     events.subscribers[event.topic][0].assert_called_with(event)

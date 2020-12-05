@@ -28,9 +28,9 @@ class EventStream(Sequence):
             raise ValueError(f"event with {event.id} already written")
 
         self.__events.append(event)
-        self._publish_to_subscribers(event)
+        asyncio.run(self._publish_to_subscribers(event))
 
-    def _publish_to_subscribers(self, event: Event) -> None:
+    async def _publish_to_subscribers(self, event: Event) -> None:
         try:
             for handler in self.subscribers[event.topic]:
                 # Ensure handler is called, but don't wait for result
