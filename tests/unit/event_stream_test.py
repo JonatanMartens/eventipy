@@ -1,3 +1,4 @@
+import asyncio
 from random import randint
 from unittest.mock import MagicMock
 from uuid import uuid4
@@ -84,6 +85,7 @@ def test_subscribe_event_published():
         return event.id
 
     events.subscribers[event.topic][0] = MagicMock()
+    events.subscribers[event.topic][0].return_value = asyncio.Future()
     events.publish(event)
     events.subscribers[event.topic][0].assert_called_with(event)
 
