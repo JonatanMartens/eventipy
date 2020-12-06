@@ -6,7 +6,7 @@ from uuid import uuid4
 import pytest
 
 from eventipy.event import Event
-from eventipy.event_stream import EventStream
+from eventipy.event_stream import EventStream, ALL_TOPICS
 
 events: EventStream
 event: Event
@@ -18,6 +18,20 @@ def run_around_tests():
     events = EventStream()
     event = Event(str(uuid4()))
     yield
+
+
+def assert_topic_handlers_were_called(topic: str):
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    for index in range(len(events.subscribers[topic])):
+        handler = MagicMock()
+        handler.return_value = asyncio.Future()
+        events.subscribers[topic][index] = handler
+
+    events.publish(event)
+    for handler in events.subscribers[topic]:
+        handler.assert_called_with(event)
 
 
 def test_publish():
@@ -104,14 +118,7 @@ def test_subscribe_with_decorator_event_published():
     def handler(received_event: Event):
         return received_event.id
 
-    events.subscribers[event.topic][0] = MagicMock()
-
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
-    events.subscribers[event.topic][0].return_value = asyncio.Future()
-    events.publish(event)
-    events.subscribers[event.topic][0].assert_called_with(event)
+    assert_topic_handlers_were_called(event.topic)
 
 
 def test_subscribe_without_decorator_event_published():
@@ -119,14 +126,23 @@ def test_subscribe_without_decorator_event_published():
         return received_event.id
 
     events.subscribe(event.topic, handler)
-    events.subscribers[event.topic][0] = MagicMock()
+    assert_topic_handlers_were_called(event.topic)
 
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
 
-    events.subscribers[event.topic][0].return_value = asyncio.Future()
-    events.publish(event)
-    events.subscribers[event.topic][0].assert_called_with(event)
+def test_subscribe_to_all_topics():
+    @events.subscribe_to_all
+    def handler(received_event: Event):
+        return received_event.id
+
+    assert_topic_handlers_were_called(ALL_TOPICS)
+
+
+def test_subscribe_to_all_without_decorator_topics():
+    def handler(received_event: Event):
+        return received_event.id
+
+    events.subscribe_to_all(event_handler=handler)
+    assert_topic_handlers_were_called(ALL_TOPICS)
 
 
 def test_add_subscriber():
