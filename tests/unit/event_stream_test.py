@@ -76,7 +76,7 @@ def test_get_by_id():
     assert events.get_by_id(event.id) == event
 
 
-def test_subscribe():
+def test_subscribe_with_decorator():
     topic = str(uuid4())
 
     @events.subscribe(topic)
@@ -87,11 +87,38 @@ def test_subscribe():
     assert isinstance(events.subscribers[topic], list)
 
 
-def test_subscribe_event_published():
+def test_subscribe_without_decorator():
+    topic = str(uuid4())
+
+    def handler(received_event: Event):
+        return received_event.id
+
+    events.subscribe(topic, handler)
+
+    assert handler(event) == event.id
+    assert isinstance(events.subscribers[topic], list)
+
+
+def test_subscribe_with_decorator_event_published():
     @events.subscribe(event.topic)
     def handler(received_event: Event):
         return received_event.id
 
+    events.subscribers[event.topic][0] = MagicMock()
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    events.subscribers[event.topic][0].return_value = asyncio.Future()
+    events.publish(event)
+    events.subscribers[event.topic][0].assert_called_with(event)
+
+
+def test_subscribe_without_decorator_event_published():
+    def handler(received_event: Event):
+        return received_event.id
+
+    events.subscribe(event.topic, handler)
     events.subscribers[event.topic][0] = MagicMock()
 
     loop = asyncio.new_event_loop()
