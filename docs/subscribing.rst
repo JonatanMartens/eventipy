@@ -27,3 +27,45 @@ You can also subscribe without using a decorator like this:
     events.subscribe("my-topic", event_handler)
 
 This is useful if you don't want to subscribe right away.
+
+
+Subscribing to all topics
+-------------------------
+
+In order to subscribe to all topics:
+
+.. code-block:: python
+
+    from eventipy import events, Event
+
+    @events.subscribe_to_all
+    def event_handler(event: Event):
+        # Do something with event
+        print(event.id)
+
+Without decorator:
+
+.. code-block:: python
+
+    from eventipy import events, Event
+
+    def event_handler(event: Event):
+        # Do something with event
+        print(event.id)
+
+    events.subscribe_to_all(event_handler)
+
+
+Internally this uses ``"*"`` as topic so:
+
+.. code-block:: python
+
+    from eventipy import events, Event
+
+    @events.subscribe("*")
+    def event_handler(event: Event):
+        # Do something with event
+        print(event.id)
+
+
+would also work, but is not recommended.
