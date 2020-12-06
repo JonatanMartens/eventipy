@@ -10,6 +10,8 @@ from eventipy.event_handler import EventHandler
 
 logger = logging.getLogger(__name__)
 
+ALL_TOPICS = "*"
+
 
 class EventStream(Sequence):
     def __init__(self):
@@ -32,8 +34,12 @@ class EventStream(Sequence):
         asyncio.run(self._publish_to_subscribers(event))
 
     async def _publish_to_subscribers(self, event: Event) -> None:
+        asyncio.ensure_future(self._publish_to_topic(event.topic, event))
+        asyncio.ensure_future(self._publish_to_topic(ALL_TOPICS, event))
+
+    async def _publish_to_topic(self, topic: str, event: Event):
         try:
-            for handler in self.subscribers[event.topic]:
+            for handler in self.subscribers[topic]:
                 # Ensure handler is called, but don't wait for result
                 asyncio.ensure_future(handler(event))
         except KeyError:
@@ -63,6 +69,9 @@ class EventStream(Sequence):
             return wrapper(event_handler)
 
         return wrapper
+
+    def subscribe_to_all(self, event_handler: EventHandler = None):
+        return self.subscribe(topic=ALL_TOPICS, event_handler=event_handler)
 
     def _add_subscriber(self, topic: str, handler: Callable) -> None:
         try:
