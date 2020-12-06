@@ -6,6 +6,7 @@ from typing import List, Callable, Dict
 from uuid import UUID
 
 from eventipy.event import Event
+from eventipy.event_handler import EventHandler
 
 logger = logging.getLogger(__name__)
 
@@ -38,13 +39,14 @@ class EventStream(Sequence):
         except KeyError:
             pass
 
-    def subscribe(self, topic: str) -> Callable:
+    def subscribe(self, topic: str, event_handler: EventHandler = None) -> Callable:
         """
         Args:
             topic (str): The topic to which this handler listens
+            event_handler (Callable[[Event], None]): Optional handler to give to avoid using decorator
         """
 
-        def wrapper(event_handler: Callable[..., None]) -> Callable:
+        def wrapper(event_handler: EventHandler) -> Callable:
             @wraps(event_handler)
             async def handle_event(event: Event):
                 try:
@@ -56,6 +58,9 @@ class EventStream(Sequence):
 
             self._add_subscriber(topic, handler=handle_event)
             return event_handler
+
+        if event_handler:
+            return wrapper(event_handler)
 
         return wrapper
 
