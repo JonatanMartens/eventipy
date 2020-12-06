@@ -10,7 +10,7 @@ from eventipy.event_handler import EventHandler
 
 logger = logging.getLogger(__name__)
 
-ALL_EVENTS = "*"
+ALL_TOPICS = "*"
 
 
 class EventStream(Sequence):
@@ -35,7 +35,7 @@ class EventStream(Sequence):
 
     async def _publish_to_subscribers(self, event: Event) -> None:
         asyncio.ensure_future(self._publish_to_topic(event.topic, event))
-        asyncio.ensure_future(self._publish_to_topic(ALL_EVENTS, event))
+        asyncio.ensure_future(self._publish_to_topic(ALL_TOPICS, event))
 
     async def _publish_to_topic(self, topic: str, event: Event):
         try:
@@ -71,7 +71,7 @@ class EventStream(Sequence):
         return wrapper
 
     def subscribe_to_all(self, event_handler: EventHandler = None):
-        return self.subscribe(topic=ALL_EVENTS, event_handler=event_handler)
+        return self.subscribe(topic=ALL_TOPICS, event_handler=event_handler)
 
     def _add_subscriber(self, topic: str, handler: Callable) -> None:
         try:

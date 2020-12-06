@@ -6,7 +6,7 @@ from uuid import uuid4
 import pytest
 
 from eventipy.event import Event
-from eventipy.event_stream import EventStream, ALL_EVENTS
+from eventipy.event_stream import EventStream, ALL_TOPICS
 
 events: EventStream
 event: Event
@@ -134,7 +134,7 @@ def test_subscribe_to_all_topics():
     def handler(received_event: Event):
         return received_event.id
 
-    assert_topic_handlers_were_called(ALL_EVENTS)
+    assert_topic_handlers_were_called(ALL_TOPICS)
 
 
 def test_subscribe_to_all_without_decorator_topics():
@@ -142,7 +142,7 @@ def test_subscribe_to_all_without_decorator_topics():
         return received_event.id
 
     events.subscribe_to_all(event_handler=handler)
-    assert_topic_handlers_were_called(ALL_EVENTS)
+    assert_topic_handlers_were_called(ALL_TOPICS)
 
 
 def test_add_subscriber():
