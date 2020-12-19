@@ -11,6 +11,7 @@ coveralls = "~=2.2.0"
 pylint = "~=2.6.0"
 eventipy = {editable = true, path = "."}
 importlib-metadata = "~=3.3.0"
+typing-extensions = "~=3.7.4.3"
 
 [packages]
 dataclasses = "~=0.6"
