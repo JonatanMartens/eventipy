@@ -12,3 +12,4 @@ pylint = "~=2.6.0"
 eventipy = {editable = true, path = "."}
 
 [packages]
+dataclasses = "~=0.6"
