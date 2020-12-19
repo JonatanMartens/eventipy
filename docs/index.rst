@@ -41,7 +41,8 @@ Subscribing to a topic:
 Dependencies
 ============
 
-``eventipy`` has no dependencies!
+* dataclasses (for python 3.6 compatability)
+
 
 Table Of Contents
 =================
