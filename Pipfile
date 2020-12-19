@@ -10,6 +10,7 @@ sphinx-rtd-theme = "*"
 coveralls = "~=2.2.0"
 pylint = "~=2.6.0"
 eventipy = {editable = true, path = "."}
+importlib-metadata = "~=3.3.0"
 
 [packages]
 dataclasses = "~=0.6"
