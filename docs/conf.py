@@ -15,7 +15,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath('..'))
 
-from eventipy import __version__
+import eventipy
 
 # -- Project information -----------------------------------------------------
 
@@ -24,7 +24,7 @@ copyright = '2020, Jonatan Martens'
 author = 'Jonatan Martens'
 
 # The full version, including alpha/beta/rc tags
-release = '1.0.0'
+release = '1.2.1'
 
 # -- General configuration ---------------------------------------------------
 
@@ -57,4 +57,5 @@ html_theme = 'sphinx_rtd_theme'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = []
 
-version = __version__
+version = "1.2.1"
+
