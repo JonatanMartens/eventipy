@@ -25,3 +25,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
           tags: true
+        # Ignore error because of previous tags
+        continue-on-error: true
