@@ -15,7 +15,10 @@ jobs:
           pip install pipenv
           pipenv install --dev
       - name: Bump version
-        run: pipenv run bumpversion --tag build
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "Github Action"
+          pipenv run bumpversion --tag build
       - name: Push tag
         uses: ad-m/github-push-action@master
         with:
