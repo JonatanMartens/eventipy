@@ -21,10 +21,11 @@ Publishing an event:
 
 .. code-block:: python
 
+    import asyncio
     from eventipy import events, Event
 
     event = Event("my-topic")
-    events.publish(event)
+    asyncio.run(events.publish(event))
 
 
 Subscribing to a topic:
