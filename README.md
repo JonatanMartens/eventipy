@@ -23,10 +23,11 @@ For full documentation please visit: https://eventipy.readthedocs.io/en/stable/
 Publishing events:
 
 ```python
+import asyncio
 from eventipy import events, Event
 
 event = Event("my-topic")
-events.publish(event)
+asyncio.run(events.publish(event))
 ```
 
 Subscribing to topics:
