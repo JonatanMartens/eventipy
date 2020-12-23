@@ -18,7 +18,7 @@ class EventStream(Sequence):
         self.__events: List[Event] = []
         self.subscribers: Dict[str, List[Callable]] = {}
 
-    def publish(self, event: Event) -> None:
+    async def publish(self, event: Event) -> None:
         """
         Args:
             event (Event): The event to publish
@@ -31,17 +31,17 @@ class EventStream(Sequence):
             raise ValueError(f"event with {event.id} already written")
 
         self.__events.append(event)
-        asyncio.run(self._publish_to_subscribers(event))
+        await self._publish_to_subscribers(event)
 
     async def _publish_to_subscribers(self, event: Event) -> None:
-        asyncio.ensure_future(self._publish_to_topic(event.topic, event))
-        asyncio.ensure_future(self._publish_to_topic(ALL_TOPICS, event))
+        await self._publish_to_topic(event.topic, event)
+        await self._publish_to_topic(ALL_TOPICS, event)
 
     async def _publish_to_topic(self, topic: str, event: Event):
         try:
             for handler in self.subscribers[topic]:
                 # Ensure handler is called, but don't wait for result
-                asyncio.ensure_future(handler(event))
+                await handler(event)
         except KeyError:
             pass
 
@@ -53,10 +53,14 @@ class EventStream(Sequence):
         """
 
         def wrapper(event_handler: EventHandler) -> Callable:
+            loop = asyncio.get_event_loop()
+            async def awaitable(event: Event):
+                return await loop.run_in_executor(None, event_handler, event)
+
             @wraps(event_handler)
             async def handle_event(event: Event):
                 try:
-                    event_handler(event)
+                    return await awaitable(event)
                 except Exception as exception:
                     logger.warning(f"{event_handler.__name__} failed to handle "
                                    f"event of topic {topic}. "

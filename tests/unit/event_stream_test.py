@@ -20,42 +20,44 @@ def run_around_tests():
     yield
 
 
-def assert_topic_handlers_were_called(topic: str):
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
+async def assert_topic_handlers_were_called(topic: str):
     for index in range(len(events.subscribers[topic])):
-        handler = MagicMock()
-        handler.return_value = asyncio.Future()
+        async def async_function(*args, **kwargs):
+            pass
+        handler = MagicMock(wraps=async_function)
         events.subscribers[topic][index] = handler
 
-    events.publish(event)
+    await events.publish(event)
     for handler in events.subscribers[topic]:
         handler.assert_called_with(event)
 
 
-def test_publish():
-    events.publish(event)
+@pytest.mark.asyncio
+async def test_publish():
+    await events.publish(event)
     assert events[0] == event
 
 
-def test_publish_integer():
+@pytest.mark.asyncio
+async def test_publish_integer():
     with pytest.raises(TypeError):
-        events.publish(0)
+        await events.publish(0)
 
 
-def test_set_item():
-    events.publish(event)
+@pytest.mark.asyncio
+async def test_set_item():
+    await events.publish(event)
     with pytest.raises(TypeError):
         events[0] = event
 
 
-def test_get_all_events_by_topic():
+@pytest.mark.asyncio
+async def test_get_all_events_by_topic():
     amount_of_events = randint(1, 30)
     topic = str(uuid4())
 
     for _ in range(amount_of_events):
-        events.publish(Event(topic))
+        await events.publish(Event(topic))
 
     topic_events = events.get_by_topic(topic=topic)
 
@@ -67,13 +69,14 @@ def test_get_all_events_by_topic():
     assert len(matching_topic_events) == len(topic_events)
 
 
-def test_get_five_events_by_topic():
+@pytest.mark.asyncio
+async def test_get_five_events_by_topic():
     amount_of_events = randint(1, 30)
     max_events = randint(1, amount_of_events)
     topic = str(uuid4())
 
     for _ in range(amount_of_events):
-        events.publish(Event(topic))
+        await events.publish(Event(topic))
 
     topic_events = events.get_by_topic(topic=topic, max_events=max_events)
 
@@ -85,8 +88,9 @@ def test_get_five_events_by_topic():
     assert len(matching_topic_events) == len(topic_events)
 
 
-def test_get_by_id():
-    events.publish(event)
+@pytest.mark.asyncio
+async def test_get_by_id():
+    await events.publish(event)
     assert events.get_by_id(event.id) == event
 
 
@@ -113,36 +117,40 @@ def test_subscribe_without_decorator():
     assert isinstance(events.subscribers[topic], list)
 
 
-def test_subscribe_with_decorator_event_published():
+@pytest.mark.asyncio
+async def test_subscribe_with_decorator_event_published():
     @events.subscribe(event.topic)
     def handler(received_event: Event):
         return received_event.id
 
-    assert_topic_handlers_were_called(event.topic)
+    await assert_topic_handlers_were_called(event.topic)
 
 
-def test_subscribe_without_decorator_event_published():
+@pytest.mark.asyncio
+async def test_subscribe_without_decorator_event_published():
     def handler(received_event: Event):
         return received_event.id
 
     events.subscribe(event.topic, handler)
-    assert_topic_handlers_were_called(event.topic)
+    await assert_topic_handlers_were_called(event.topic)
 
 
-def test_subscribe_to_all_topics():
+@pytest.mark.asyncio
+async def test_subscribe_to_all_topics():
     @events.subscribe_to_all
     def handler(received_event: Event):
         return received_event.id
 
-    assert_topic_handlers_were_called(ALL_TOPICS)
+    await assert_topic_handlers_were_called(ALL_TOPICS)
 
 
-def test_subscribe_to_all_without_decorator_topics():
+@pytest.mark.asyncio
+async def test_subscribe_to_all_without_decorator_topics():
     def handler(received_event: Event):
         return received_event.id
 
     events.subscribe_to_all(event_handler=handler)
-    assert_topic_handlers_were_called(ALL_TOPICS)
+    await assert_topic_handlers_were_called(ALL_TOPICS)
 
 
 def test_add_subscriber():

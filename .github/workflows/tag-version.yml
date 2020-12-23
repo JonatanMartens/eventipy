@@ -1,11 +1,11 @@
-name: release-version 
+name: tag-version
 
 on:
   push:
     branches: [ master ]
 
 jobs:
-  release-version:
+  tag-version:
     runs-on: ubuntu-latest
     container: python:3.9
     steps:
@@ -25,5 +25,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
           tags: true
-        # Ignore error because of previous tags
-        continue-on-error: true
+        force: true
