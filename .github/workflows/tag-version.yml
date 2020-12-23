@@ -26,3 +26,6 @@ jobs:
           branch: ${{ github.ref }}
           tags: true
           force: true
+        # Ignore error because of previous tags
+        continue-on-error: true
+
