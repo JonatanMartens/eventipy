@@ -1,0 +1,29 @@
+name: release-dev-version
+
+on:
+  push:
+    branches: [ development ]
+
+jobs:
+  release-version:
+    runs-on: ubuntu-latest
+    container: python:3.9
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          pip install pipenv
+          pipenv install --dev
+      - name: Bump version
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "Github Action"
+          pipenv run bumpversion --tag build
+      - name: Push tag
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+          tags: true
+        # Ignore error because of previous tags
+        continue-on-error: true
