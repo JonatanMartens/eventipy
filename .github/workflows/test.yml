@@ -5,8 +5,7 @@ on:
     branches: [ master, development, feature/*, bugfix/*, maintenance/* ]
 
 jobs:
-  test:
-
+  unit-test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
