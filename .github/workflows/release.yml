@@ -1,28 +1,26 @@
-name: release
+name: create-release
 
 on:
   push:
     tags:
-      - v*
+      - '*'
 
 jobs:
   release:
-    name: Release
+    name: Create release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Create release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create a Release
+        uses: actions/create-release@v1.1.4
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
           body: |
-            Changes:
-              - First change
-              - Second change
+              Changes:
+                - First change
+                - Second change
           draft: false
           prerelease: false
-
