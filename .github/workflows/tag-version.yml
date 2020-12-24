@@ -1,8 +1,8 @@
-name: tag-version
+name: tag-version 
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, development ]
 
 jobs:
   tag-version:
@@ -14,11 +14,25 @@ jobs:
         run: |
           pip install pipenv
           pipenv install --dev
-      - name: Bump version
+
+      - name: Delete tags
+        run: git tag -l | xargs git tag -d
+
+      - name: Set git credentials
         run: |
           git config user.email "action@github.com"
           git config user.name "Github Action"
+
+      - name: Bump version development
+        if: ${{ github.ref == 'ref/head/development' }}
+        run: |
+          pipenv run bumpversion --tag build
+
+      - name: Bump version master
+        if: ${{ github.ref == 'ref/head/master' }}
+        run: |
           pipenv run bumpversion --tag release
+ 
       - name: Push tag
         uses: ad-m/github-push-action@master
         with:
@@ -26,6 +40,4 @@ jobs:
           branch: ${{ github.ref }}
           tags: true
           force: true
-        # Ignore error because of previous tags
-        continue-on-error: true
 
