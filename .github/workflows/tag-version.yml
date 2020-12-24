@@ -24,12 +24,12 @@ jobs:
           git config user.name "Github Action"
 
       - name: Bump version development
-        if: github.ref == 'refs/head/development'
+        if: github.ref == 'refs/heads/development'
         run: |
           pipenv run bumpversion --tag build
 
       - name: Bump version master
-        if: github.ref == 'refs/head/master'
+        if: github.ref == 'refs/heads/master'
         run: |
           pipenv run bumpversion --tag release
  
