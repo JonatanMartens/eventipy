@@ -23,10 +23,11 @@ For full documentation please visit: https://eventipy.readthedocs.io/en/stable/
 Publishing events:
 
 ```python
+import asyncio
 from eventipy import events, Event
 
 event = Event("my-topic")
-events.publish(event)
+asyncio.run(events.publish(event))
 ```
 
 Subscribing to topics:
@@ -55,6 +56,28 @@ Please make sure to update tests as appropriate.
 
 ## Versioning
 We use [SemVer](semver.org) for versioning. For the versions available, see the tags on this repository.
+
+To bump the version we use [`bumpversion`](https://github.com/c4urself/bump2version) to handle versions. Actions:
+
+Bug fixes:
+
+```shell
+$ bumpversion patch # from v1.0.0 -> v1.0.1
+```
+
+New features:
+
+```shell
+$ bumpversion minor # from v1.0.0 -> v1.1.0
+```
+
+Breaking changes:
+
+```shell
+$ bumpversion major # from v1.0.0 -> v2.0.0
+```
+
+These commands will create a commit, if you want to avoid this please add the `--no-commit` flag.
 
 ## License
 We use the MIT license, see [LICENSE.md](LICENSE.md) for details

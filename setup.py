@@ -1,8 +1,6 @@
 import setuptools
 
-from eventipy import __version__
-
-version = __version__
+version = "2.0.0"
 
 with open("README.md", "r") as fh:
     long_description = fh.read()

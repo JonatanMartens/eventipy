@@ -2,7 +2,8 @@ import asyncio
 import logging
 from collections.abc import Sequence
 from functools import wraps
-from typing import List, Callable, Dict
+from inspect import iscoroutinefunction
+from typing import Callable, Dict, List
 from uuid import UUID
 
 from eventipy.event import Event
@@ -18,7 +19,7 @@ class EventStream(Sequence):
         self.__events: List[Event] = []
         self.subscribers: Dict[str, List[Callable]] = {}
 
-    def publish(self, event: Event) -> None:
+    async def publish(self, event: Event) -> None:
         """
         Args:
             event (Event): The event to publish
@@ -31,17 +32,17 @@ class EventStream(Sequence):
             raise ValueError(f"event with {event.id} already written")
 
         self.__events.append(event)
-        asyncio.run(self._publish_to_subscribers(event))
+        await self._publish_to_subscribers(event)
 
     async def _publish_to_subscribers(self, event: Event) -> None:
-        asyncio.ensure_future(self._publish_to_topic(event.topic, event))
-        asyncio.ensure_future(self._publish_to_topic(ALL_TOPICS, event))
+        await self._publish_to_topic(event.topic, event)
+        await self._publish_to_topic(ALL_TOPICS, event)
 
     async def _publish_to_topic(self, topic: str, event: Event):
         try:
             for handler in self.subscribers[topic]:
                 # Ensure handler is called, but don't wait for result
-                asyncio.ensure_future(handler(event))
+                await handler(event)
         except KeyError:
             pass
 
@@ -53,16 +54,24 @@ class EventStream(Sequence):
         """
 
         def wrapper(event_handler: EventHandler) -> Callable:
+            if iscoroutinefunction(event_handler):
+                loop = asyncio.get_event_loop()
+
+                async def awaitable(event: Event):
+                    return await loop.run_in_executor(None, event_handler, event)
+            else:
+                awaitable = event_handler
+
             @wraps(event_handler)
-            async def handle_event(event: Event):
+            async def executor(event: Event):
                 try:
-                    event_handler(event)
+                    return await awaitable(event)
                 except Exception as exception:
                     logger.warning(f"{event_handler.__name__} failed to handle "
                                    f"event of topic {topic}. "
                                    f"Exception: {exception}")
 
-            self._add_subscriber(topic, handler=handle_event)
+            self._add_subscriber(topic, handler=executor)
             return event_handler
 
         if event_handler:
