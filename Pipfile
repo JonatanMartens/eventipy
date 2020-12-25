@@ -4,8 +4,8 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pytest = "~=6.1.2"
-sphinx = "~=3.3.1"
+pytest = "~=6.2.1"
+sphinx = "~=3.4.0"
 sphinx-rtd-theme = "*"
 coveralls = "~=2.2.0"
 pylint = "~=2.6.0"
