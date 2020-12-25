@@ -35,7 +35,7 @@ Subscribing to a topic:
     from eventipy import events
 
     @events.subscribe("my-topic")
-    def event_handler(event: Event):
+    async def event_handler(event: Event):
         print(event.id)
         print(event.topic)
 

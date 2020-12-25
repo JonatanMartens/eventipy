@@ -2,7 +2,8 @@ import asyncio
 import logging
 from collections.abc import Sequence
 from functools import wraps
-from typing import List, Callable, Dict
+from inspect import iscoroutinefunction
+from typing import Callable, Dict, List
 from uuid import UUID
 
 from eventipy.event import Event
@@ -53,12 +54,16 @@ class EventStream(Sequence):
         """
 
         def wrapper(event_handler: EventHandler) -> Callable:
-            loop = asyncio.get_event_loop()
-            async def awaitable(event: Event):
-                return await loop.run_in_executor(None, event_handler, event)
+            if iscoroutinefunction(event_handler):
+                loop = asyncio.get_event_loop()
+
+                async def awaitable(event: Event):
+                    return await loop.run_in_executor(None, event_handler, event)
+            else:
+                awaitable = event_handler
 
             @wraps(event_handler)
-            async def handle_event(event: Event):
+            async def executor(event: Event):
                 try:
                     return await awaitable(event)
                 except Exception as exception:
@@ -66,7 +71,7 @@ class EventStream(Sequence):
                                    f"event of topic {topic}. "
                                    f"Exception: {exception}")
 
-            self._add_subscriber(topic, handler=handle_event)
+            self._add_subscriber(topic, handler=executor)
             return event_handler
 
         if event_handler:
