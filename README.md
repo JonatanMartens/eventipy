@@ -62,19 +62,19 @@ To bump the version we use [`bumpversion`](https://github.com/c4urself/bump2vers
 Bug fixes:
 
 ```shell
-$ bumpversion patch # from v1.0.0-dev1 -> v1.0.1-dev0
+$ bumpversion patch # from v1.0.0 -> v1.0.1
 ```
 
 New features:
 
 ```shell
-$ bumpversion minor # from v1.0.0-dev1 -> v1.1.0-dev0
+$ bumpversion minor # from v1.0.0 -> v1.1.0
 ```
 
 Breaking changes:
 
 ```shell
-$ bumpversion major # from v1.0.0-dev1 -> v2.0.0-dev0
+$ bumpversion major # from v1.0.0 -> v2.0.0
 ```
 
 These commands will create a commit, if you want to avoid this please add the `--no-commit` flag.
