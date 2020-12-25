@@ -8,19 +8,30 @@ In order to subscribe to events:
     from eventipy import events, Event
 
     @events.subscribe("my-topic")
-    def event_handler(event: Event):
+    async def event_handler(event: Event):
         # Do something with event
         print(event.id)
 
 every time that an event with topic ``my-topic`` is published, ``event_handler`` will be called.
 
-You can also subscribe without using a decorator like this:
+You can also subscribe using a regular function (not async):
 
 .. code-block:: python
 
     from eventipy import events, Event
 
+    @events.subscribe("my-topic")
     def event_handler(event: Event):
+        # Do something with event
+        print(event.id)
+
+Or without using a decorator like this:
+
+.. code-block:: python
+
+    from eventipy import events, Event
+
+    async def event_handler(event: Event):
         # Do something with event
         print(event.id)
 
@@ -39,7 +50,7 @@ In order to subscribe to all topics:
     from eventipy import events, Event
 
     @events.subscribe_to_all
-    def event_handler(event: Event):
+    async def event_handler(event: Event):
         # Do something with event
         print(event.id)
 
@@ -49,7 +60,7 @@ Without decorator:
 
     from eventipy import events, Event
 
-    def event_handler(event: Event):
+    async def event_handler(event: Event):
         # Do something with event
         print(event.id)
 
@@ -63,7 +74,7 @@ Internally this uses ``"*"`` as topic so:
     from eventipy import events, Event
 
     @events.subscribe("*")
-    def event_handler(event: Event):
+    async def event_handler(event: Event):
         # Do something with event
         print(event.id)
 
