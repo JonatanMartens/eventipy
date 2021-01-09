@@ -54,10 +54,10 @@ class EventStream(Sequence):
         """
 
         def wrapper(event_handler: EventHandler) -> Callable:
-            if iscoroutinefunction(event_handler):
-                loop = asyncio.get_event_loop()
+            if not iscoroutinefunction(event_handler):
 
                 async def awaitable(event: Event):
+                    loop = asyncio.get_event_loop()
                     return await loop.run_in_executor(None, event_handler, event)
             else:
                 awaitable = event_handler
