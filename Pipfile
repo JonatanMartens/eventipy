@@ -7,7 +7,7 @@ verify_ssl = true
 pytest = "~=6.2.1"
 sphinx = "~=3.4.3"
 sphinx-rtd-theme = "*"
-coveralls = "~=2.2.0"
+coveralls = "~=3.0.0"
 pylint = "~=2.6.0"
 eventipy = {editable = true, path = "."}
 importlib-metadata = "~=3.3.0"
