@@ -8,7 +8,7 @@ pytest = "~=6.2.1"
 sphinx = "~=3.4.3"
 sphinx-rtd-theme = "*"
 coveralls = "~=2.2.0"
-pylint = "~=2.6.0"
+pylint = "~=2.7.4"
 eventipy = {editable = true, path = "."}
 importlib-metadata = "~=3.3.0"
 typing-extensions = "~=3.7.4.3"
