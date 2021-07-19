@@ -59,6 +59,7 @@ class EventStream(Sequence):
                 async def awaitable(event: Event):
                     loop = asyncio.get_event_loop()
                     return await loop.run_in_executor(None, event_handler, event)
+
             else:
                 awaitable = event_handler
 
@@ -67,9 +68,11 @@ class EventStream(Sequence):
                 try:
                     return await awaitable(event)
                 except Exception as exception:
-                    logger.warning(f"{event_handler.__name__} failed to handle "
-                                   f"event of topic {topic}. "
-                                   f"Exception: {exception}")
+                    logger.warning(
+                        f"{event_handler.__name__} failed to handle "
+                        f"event of topic {topic}. "
+                        f"Exception: {exception}"
+                    )
 
             self._add_subscriber(topic, handler=executor)
             return event_handler
