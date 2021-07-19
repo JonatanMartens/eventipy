@@ -6,7 +6,7 @@ from uuid import uuid4
 import pytest
 
 from eventipy.event import Event
-from eventipy.event_stream import EventStream, ALL_TOPICS
+from eventipy.event_stream import ALL_TOPICS, EventStream
 
 events: EventStream
 event: Event
@@ -16,14 +16,16 @@ event: Event
 def run_around_tests():
     global events, event
     events = EventStream()
-    event = Event(str(uuid4()))
+    event = Event(topic=str(uuid4()))
     yield
 
 
 async def assert_topic_handlers_were_called(topic: str):
     for index in range(len(events.subscribers[topic])):
+
         async def async_function(*args, **kwargs):
             pass
+
         handler = MagicMock(wraps=async_function)
         events.subscribers[topic][index] = handler
 
@@ -57,14 +59,14 @@ async def test_get_all_events_by_topic():
     topic = str(uuid4())
 
     for _ in range(amount_of_events):
-        await events.publish(Event(topic))
+        await events.publish(Event(topic=topic))
 
     topic_events = events.get_by_topic(topic=topic)
 
     assert len(topic_events) == amount_of_events
-    matching_topic_events = [topic_event
-                             for topic_event in topic_events
-                             if topic_event.topic == topic]
+    matching_topic_events = [
+        topic_event for topic_event in topic_events if topic_event.topic == topic
+    ]
 
     assert len(matching_topic_events) == len(topic_events)
 
@@ -76,14 +78,14 @@ async def test_get_five_events_by_topic():
     topic = str(uuid4())
 
     for _ in range(amount_of_events):
-        await events.publish(Event(topic))
+        await events.publish(Event(topic=topic))
 
     topic_events = events.get_by_topic(topic=topic, max_events=max_events)
 
     assert len(topic_events) == max_events
-    matching_topic_events = [topic_event
-                             for topic_event in topic_events
-                             if topic_event.topic == topic]
+    matching_topic_events = [
+        topic_event for topic_event in topic_events if topic_event.topic == topic
+    ]
 
     assert len(matching_topic_events) == len(topic_events)
 

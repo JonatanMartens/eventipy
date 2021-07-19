@@ -1,10 +1,10 @@
-from dataclasses import dataclass, field
 from datetime import datetime
 from uuid import UUID, uuid4
 
+from pydantic import BaseModel, Field
 
-@dataclass
-class Event:
+
+class Event(BaseModel):
     topic: str
-    id: UUID = field(default_factory=uuid4, init=False)
-    created_at: datetime = field(default_factory=datetime.now, init=False)
+    id: UUID = Field(default_factory=uuid4, init=False)
+    created_at: datetime = Field(default_factory=datetime.now, init=False)

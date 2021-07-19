@@ -15,7 +15,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/JonatanMartens/eventipy",
     packages=setuptools.find_packages(exclude=("tests",)),
-    install_requires=["dataclasses==0.6"],
+    install_requires=["pydantic==1.8.2"],
     exclude=["*test.py", "tests"],
     keywords="event pubsub events",
     license="MIT",

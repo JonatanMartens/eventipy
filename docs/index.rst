@@ -24,7 +24,7 @@ Publishing an event:
     import asyncio
     from eventipy import events, Event
 
-    event = Event("my-topic")
+    event = Event(topic="my-topic")
     asyncio.run(events.publish(event))
 
 

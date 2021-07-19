@@ -26,7 +26,7 @@ Publishing events:
 import asyncio
 from eventipy import events, Event
 
-event = Event("my-topic")
+event = Event(topic="my-topic")
 asyncio.run(events.publish(event))
 ```
 
@@ -42,6 +42,17 @@ def event_handler(event: Event):
 ```
 
 now every time an event with topic `my-topic` is published, `event_handler` will be called.
+
+Define your own events like this:
+
+```python
+class MyEvent(Event):
+     topic = "event-topic"
+     foo: int
+     bar: int
+```
+
+eventipy uses pydantic, so there is automatic type checking!
 
 ## Tests
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install eventipy
