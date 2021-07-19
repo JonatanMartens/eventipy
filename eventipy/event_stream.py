@@ -3,7 +3,7 @@ import logging
 from collections.abc import Sequence
 from functools import wraps
 from inspect import iscoroutinefunction
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Optional, Union
 from uuid import UUID
 
 from eventipy.event import Event
@@ -61,7 +61,7 @@ class EventStream(Sequence):
                     return await loop.run_in_executor(None, event_handler, event)
 
             else:
-                awaitable = event_handler
+                awaitable = event_handler  # type: ignore
 
             @wraps(event_handler)
             async def executor(event: Event):
@@ -91,7 +91,7 @@ class EventStream(Sequence):
         except KeyError:
             self.subscribers[topic] = [handler]
 
-    def get_by_id(self, event_id: UUID) -> Event:
+    def get_by_id(self, event_id: UUID) -> Optional[Event]:
         """
         Args:
             event_id (UUID): The id of the wanted event
@@ -99,6 +99,7 @@ class EventStream(Sequence):
         for event in self.__events:
             if event.id == event_id:
                 return event
+        return None
 
     def get_by_topic(self, topic: str, max_events: int = None) -> List[Event]:
         """
@@ -117,8 +118,8 @@ class EventStream(Sequence):
     def __len__(self) -> int:
         return len(self.__events)
 
-    def __getitem__(self, i: int) -> Event:
-        return self.__events[i]
+    def __getitem__(self, i: Union[int, slice]) -> Event:  # type: ignore
+        return self.__events[i]  # type: ignore
 
     def __setitem__(self, key, value) -> None:
         raise TypeError("EventStream object does not support item assignment")
