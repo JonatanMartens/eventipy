@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 
 class Event(BaseModel):
-    topic: str = ""
+    topic: ClassVar[str]
     id: UUID = Field(default_factory=uuid4, init=False)
     created_at: datetime = Field(default_factory=datetime.now, init=False)
 
