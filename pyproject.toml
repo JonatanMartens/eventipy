@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eventipy"
-version = "2.1.0"
+version = "2.1.1"
 description = "In-memory python event library"
 authors = ["Jonatan Martens <jonatanmartenstav@gmail.com>"]
 license = "MIT"
